@@ -13,7 +13,7 @@ describe('Funcionalidade: Produtos', () => {
         cy.get('#tab-title-description > a').should('contain', 'Descrição')
     });
 
-    it.only('Deve um produto com sucesso', () => {
+    it('Deve um produto com sucesso', () => {
         let produto = 'Eos V-Neck Hoodie'
         produtosPage.buscarProduto(produto)
         cy.get('.product_title').should('contain', produto)
@@ -21,10 +21,27 @@ describe('Funcionalidade: Produtos', () => {
     });
 
     it('Deve visitar a página do produto', () => {
-       
+       produtosPage.visitarProduto('Eos V-Neck Hoodie')
+       cy.get('.product_title').should('contain', 'Eos V-Neck Hoodie')
     });
 
     it('Deve adicionar produto ao carrinho', () => {
+        let qtde = 7
+       produtosPage.buscarProduto('Abominable Hoodie')
+       produtosPage.addProdutoCarrinho('L', 'Blue', qtde)
+       cy.get('.woocommerce-message').should('contain', qtde +' × “Abominable Hoodie” foram adicionados no seu carrinho.')
+    });
+
+    it.only('Deve adicionar produto ao carrinho buscando da massa de dados', () => {
+        cy.fixture('produtos').then(dados => {          
+            produtosPage.buscarProduto(dados[2].nomeProduto)
+            produtosPage.addProdutoCarrinho(
+                dados[2].tamanho, 
+                dados[2].cor, 
+                dados[2].quantidade)
+            cy.get('.woocommerce-message').should('contain', dados[2].nomeProduto)
+        })
+
        
     });
 
